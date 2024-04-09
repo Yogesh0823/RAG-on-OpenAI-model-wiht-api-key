@@ -32,16 +32,19 @@ def get_pdf_text(pdf_docs):
         pdf_reader = PdfReader(pdf)
         for page in pdf_reader.pages:
             text += page.extract_text()
+    # print(text)
     return text
 
 def get_text_chunks(text):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
     chunks = text_splitter.split_text(text)
+    # print(chunks)
     return chunks
 
 def get_vector_store(text_chunks, api_key):
     embeddings = OpenAIEmbeddings(api_key=api_key)
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+    # print(vector_store)
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
@@ -54,8 +57,10 @@ def get_conversational_chain():
     Answer:
     """
     model = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, api_key=api_key)
+    # print(model)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+    # print(chain)
     return chain
 
 def user_input(user_question, api_key):
@@ -64,7 +69,7 @@ def user_input(user_question, api_key):
     docs = new_db.similarity_search(user_question)
     chain = get_conversational_chain()
     response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-    st.write("Reply: ", response["output_text"])
+    st.write("Output: ", response["output_text"])
 
 def main():
     st.header("AI clone chatbot💁")
