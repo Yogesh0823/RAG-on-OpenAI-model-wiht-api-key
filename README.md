@@ -1,4 +1,4 @@
-# RAG-on-OpenAI-model-wiht-api-key
+# RAG-on-OpenAI-model-with-api-key
   * create virtule environement
 
         $ python3 -m venv env_name
